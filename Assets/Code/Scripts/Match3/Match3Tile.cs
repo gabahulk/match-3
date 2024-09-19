@@ -81,4 +81,9 @@ public class Match3Tile : MonoBehaviour, IDragHandler
       }
       _isSelected = false;
    }
+
+   public TileType GetTileType()
+   {
+      return _tileType;
+   }
 }
