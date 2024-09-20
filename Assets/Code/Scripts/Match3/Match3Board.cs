@@ -1,20 +1,24 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Code.Scripts.Configs;
+using Code.Scripts.Match3;
 using Code.Scripts.SOArchitecture;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class Match3Board : MonoBehaviour, IMatch3Board
 {
-    [SerializeField] private TileType[] _tileTypes;
+    [SerializeField] private TileType[] tileTypes;
+    [SerializeField] private MatchType[] matchTypes;
     [SerializeField] private int boardSize;
     [SerializeField] private float margin;
     [SerializeField] private float spacing;
     [SerializeField] private GameObjectVariable currentTileObject;
+    [SerializeField] private Match3BoardAnimationsConfig animationsConfig;
+    [SerializeField] private BoolVariable isBoardLocked;
+
     public Match3Tile tilePrefab;
     private Match3Tile[,] _tileGrid;
     private Vector2 _tileSize;
@@ -32,12 +36,6 @@ public class Match3Board : MonoBehaviour, IMatch3Board
         _initialPosition = _tileSize * new Vector2(-1, 1) * boardSize/2 + _tileSize/2 * new Vector2(1, -1) + (_tileSpacing * new Vector2(-1,1));
 
         InitializeBoard();
-    }
-
-
-    public void ClearBoard()
-    {
-        throw new System.NotImplementedException();
     }
 
     public void InitializeBoard()
@@ -60,7 +58,7 @@ public class Match3Board : MonoBehaviour, IMatch3Board
     private Match3Tile CreateTile(Vector2Int position)
     {
         var tile = Instantiate(tilePrefab, transform, false);
-        tile.Setup(position, _tileTypes[Random.Range(0, _tileTypes.Length)]);
+        tile.Setup(position, tileTypes[Random.Range(0, tileTypes.Length)]);
         return tile;
     }
 
@@ -70,7 +68,7 @@ public class Match3Board : MonoBehaviour, IMatch3Board
         tile.SetTilePositionInGrid(position);
         tile.name = "Tile (" + position.x + "," + position.y + ")";
         return tile.transform.DOLocalMove(_initialPosition + indexPosition * _tileSize +
-                                   _tileSpacing / 2 * indexPosition,.5f).AsyncWaitForCompletion();
+                                   _tileSpacing / 2 * indexPosition,animationsConfig.TileFallDuration).AsyncWaitForCompletion();
         
     }
     
@@ -85,7 +83,7 @@ public class Match3Board : MonoBehaviour, IMatch3Board
         tile.name = "Tile (" + finalPosition.x + "," + finalPosition.y + ")";
         
         return tile.transform.DOLocalMove(_initialPosition + indexPosition * _tileSize +
-                                         _tileSpacing / 2 * indexPosition,.5f).AsyncWaitForCompletion();
+                                         _tileSpacing / 2 * indexPosition, animationsConfig.TileFallDuration).AsyncWaitForCompletion();
         
     }
 
@@ -95,10 +93,10 @@ public class Match3Board : MonoBehaviour, IMatch3Board
     }
 
 
-    public List<Dictionary<Vector2Int,Match3Tile>> CheckMatches()
+    public List<TileCluster> CheckMatches()
     {
         var excludedTiles = new Dictionary<Match3Tile, bool>();
-        var connections = new List<Dictionary<Vector2Int,Match3Tile>>();
+        var tileClusters = new List<TileCluster>();
         var posVector = new Vector2Int(0, 0);
         for (var i = 0; i < _tileGrid.GetLength(0); i++)
         {
@@ -107,10 +105,10 @@ public class Match3Board : MonoBehaviour, IMatch3Board
                 posVector.x = i;
                 posVector.y = j;
                 var tileType = _tileGrid[i, j].GetTileType();
-                var connectedTiles = GetConnectedTiles(posVector, tileType, excludedTiles);
-                if (!CanPop(connectedTiles)) continue;
-                connections.Add(connectedTiles);
-                foreach (var item in connectedTiles)
+                var tileCluster = GetTileCluster(posVector, tileType, excludedTiles);
+                if (!tileCluster.CanPop()) continue;
+                tileClusters.Add(tileCluster);
+                foreach (var item in tileCluster.GetTiles())
                 {
                     excludedTiles[item.Value] = true;
                 }
@@ -118,28 +116,48 @@ public class Match3Board : MonoBehaviour, IMatch3Board
             } 
         }
 
-        return connections;
+        return tileClusters;
     }
 
-    private void PopTiles(List<Dictionary<Vector2Int, Match3Tile>> connections)
+    private async Task PopTiles(List<TileCluster> connections)
     {
-        foreach (var connection in connections)
+        var tasks = new List<Task>();
+        foreach (var cluster in connections)
         {
-            var filteredConnection = FilterConnection(connection);
-            foreach (var item in filteredConnection)
+            var matchType = cluster.FilterClusterToMatchType(matchTypes);
+            print(matchType);
+            foreach (var item in cluster.GetTiles())
             {
-                Destroy(item.Value.gameObject);
-                _tileGrid[item.Key.x, item.Key.y] = null;
+                tasks.Add(PopTile(item.Key, item.Value));
             }
-            
+        }
+        await Task.WhenAll(tasks);
+    }
+
+    private Task PopTile(Vector2Int pos, Match3Tile tile)
+    {
+        var sequence = DOTween.Sequence();
+        sequence.Append(tile.transform.DOShakePosition(
+            animationsConfig.ShakeDurations, 
+            animationsConfig.ShakeStrength,
+            animationsConfig.ShakeVibrato,
+            animationsConfig.ShakeRandomness,
+            animationsConfig.ShakeSnapping,
+            animationsConfig.ShakeFadeOut,
+            animationsConfig.ShakeRandomnessMode));
+        sequence.Append(tile.transform.DOScale(animationsConfig.ScaleTargetValue, animationsConfig.ScaleDuration));
+        sequence.Join(tile.GetComponent<Image>().DOColor(animationsConfig.FadeColor,animationsConfig.FadeDuration));
+        sequence.AppendCallback(Callback);
+
+        return sequence.AsyncWaitForCompletion();
+
+        void Callback()
+        {
+            Destroy(tile.gameObject);
+            _tileGrid[pos.x, pos.y] = null;
         }
     }
-
-    private Dictionary<Vector2Int, Match3Tile> FilterConnection(Dictionary<Vector2Int, Match3Tile> connection)
-    {
-        return connection;
-    }
-
+    
     private async void RefillBoard()
     {
         var tasks = new List<Task>();
@@ -159,8 +177,8 @@ public class Match3Board : MonoBehaviour, IMatch3Board
                     _tileGrid[i, j] = null;
                 }
             }
-
-            tasks.AddRange(CreateNewTiles(numberOfEmptySlots, i));
+            if (numberOfEmptySlots > 0)
+                tasks.AddRange(CreateNewTiles(numberOfEmptySlots, i));
         }
         
         var posVector = new Vector2Int(0, 0);
@@ -185,33 +203,16 @@ public class Match3Board : MonoBehaviour, IMatch3Board
         for (var i = numberOfEmptySlots; i > 0; i--)
         {
             pos.y = i - 1;
-            originalPos.y = -i;
+            originalPos.y = pos.y - numberOfEmptySlots;
             _tileGrid[pos.x, pos.y] = CreateTile(pos);
             tasks.Add(PositionTile(_tileGrid[pos.x,pos.y], pos, originalPos));
         }
         return tasks;
     }
 
-    private bool CanPop(Dictionary<Vector2Int, Match3Tile> connections)
+    private TileCluster GetTileCluster(Vector2Int position, TileType typeToMatch, Dictionary<Match3Tile, bool> excludedTiles)
     {
-        foreach (var item in connections)
-        {
-            var tilePos = item.Key;
-            var hasVerticalNeighbours = connections.ContainsKey(tilePos + Vector2Int.down) &&
-                                        connections.ContainsKey(tilePos + Vector2Int.up);
-            var hasHorizontalNeighbours = connections.ContainsKey(tilePos + Vector2Int.left) &&
-                                          connections.ContainsKey(tilePos + Vector2Int.right);
-            if (hasVerticalNeighbours || hasHorizontalNeighbours)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    public Dictionary<Vector2Int, Match3Tile> GetConnectedTiles(Vector2Int position, TileType typeToMatch, Dictionary<Match3Tile, bool> excludedTiles)
-    {
-        var connectedTiles = new Dictionary<Vector2Int, Match3Tile>();
+        var connectedTiles = new TileCluster();
         if (IsOutOfBounds(position))
         {
             return connectedTiles;
@@ -229,7 +230,7 @@ public class Match3Board : MonoBehaviour, IMatch3Board
             return connectedTiles;
         }
         excludedTiles.Add(tile, true);
-        connectedTiles.Add(tile.GetTilePositionInGrid(), tile);
+        connectedTiles.AddTile(tile.GetTilePositionInGrid(), tile);
         
         var directions = new []
         {
@@ -239,9 +240,9 @@ public class Match3Board : MonoBehaviour, IMatch3Board
         foreach (var direction in directions)
         {
             var newPosition = position + direction;
-            foreach (var item in GetConnectedTiles(newPosition, typeToMatch, excludedTiles))
+            foreach (var item in GetTileCluster(newPosition, typeToMatch, excludedTiles).GetTiles())
             {
-                connectedTiles[item.Key] = item.Value;
+                connectedTiles.SetTile(item.Key, item.Value);
             }
         }
 
@@ -274,9 +275,9 @@ public class Match3Board : MonoBehaviour, IMatch3Board
         };
         await Task.WhenAll(tasks.ToArray());
         tasks.Clear();
-        var connections = CheckMatches();
-        
-        if (connections.Count <= 0)
+        var tileClusters = CheckMatches();
+        print("first clusters");
+        if (tileClusters.Count <= 0)
         {
             _tileGrid[positionB.x, positionB.y] = auxTile;
             _tileGrid[positionA.x, positionA.y] = currentTile;
@@ -286,11 +287,18 @@ public class Match3Board : MonoBehaviour, IMatch3Board
         }
         else
         {
-            while (connections.Count > 0)
+            while (tileClusters.Count > 0)
             {
-                PopTiles(connections);
+                await PopTiles(tileClusters);
                 RefillBoard();
-                connections = CheckMatches();
+                print("waiting refill");
+                await Task.Delay(1000);
+                print("rechecking clusters");
+                tileClusters = CheckMatches();
+                if (tileClusters.Count > 0)
+                {
+                    print("more clusters");
+                }
             }
         }
         
@@ -299,9 +307,8 @@ public class Match3Board : MonoBehaviour, IMatch3Board
 
 public interface IMatch3Board
 {
-    void ClearBoard();
     void InitializeBoard();
-    List<Dictionary<Vector2Int,Match3Tile>> CheckMatches();
+    List<TileCluster> CheckMatches();
 
     void MoveSelectedTile(Vector2Int direction);
 }

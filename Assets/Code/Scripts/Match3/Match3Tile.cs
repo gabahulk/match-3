@@ -16,10 +16,10 @@ public class Match3Tile : MonoBehaviour, IDragHandler
    [SerializeField] private GameEvent moveCurrentTileDownEvent;
    [SerializeField] private GameEvent moveCurrentTileLeftEvent;
    [SerializeField] private GameEvent moveCurrentTileRightEvent;
+   [SerializeField] private BoolVariable isBoardLocked;
    
    private const float DRAG_MARGIN = 0.7f;
    private Vector2Int _gridPosition;
-   private bool _isSelected = false;
    private TileType _tileType;
 
    public void Setup(Vector2Int gridPos, TileType tileType)
@@ -42,22 +42,14 @@ public class Match3Tile : MonoBehaviour, IDragHandler
    public void OnDrag(PointerEventData eventData)
    {
       var direction = (eventData.position - new Vector2(transform.position.x, transform.position.y));
-      if (direction.magnitude < 25f || _isSelected)
+      if (direction.magnitude < 25f || isBoardLocked.value)
          return;
       HandleSwipe(direction.normalized);
-      SwapCooldown();
    }
 
-   private async void SwapCooldown()
-   {
-      _isSelected = true;
-      await Task.Delay(500);
-      _isSelected = false;
-   }
 
    private void HandleSwipe(Vector2 normalizedDirection)
    {
-      _isSelected = true;
       selectedTileVariable.SetValue(transform.gameObject);
       switch (normalizedDirection.x)
       {
@@ -79,7 +71,6 @@ public class Match3Tile : MonoBehaviour, IDragHandler
             }
             break;
       }
-      _isSelected = false;
    }
 
    public TileType GetTileType()

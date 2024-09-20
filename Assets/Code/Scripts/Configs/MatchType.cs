@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using UnityEngine.Serialization;
+﻿using Code.Scripts.Match3;
+using UnityEngine;
 
 namespace Code.Scripts.Configs
 {
@@ -7,12 +7,12 @@ namespace Code.Scripts.Configs
     public class MatchType : ScriptableObject
     {
             [Multiline] public string matchFormat;
-
-            public int[,] GetMatchFormat()
+            
+            private Shape GetMatchShape()
             {
                 var lines = matchFormat.Split('\n');
                 var height = lines.Length;
-                var width = lines[0].Length;
+                var width = lines[0].Split(',').Length;
                 var result = new int[height, width];
                 for (var i = 0; i < height; i++)
                 {
@@ -24,7 +24,12 @@ namespace Code.Scripts.Configs
                     }
                 }
 
-                return result;
+                return new Shape(result);
+            }
+
+            public Match IsMatch(TileCluster cluster)
+            {
+                return ShapeMatchValidator.CheckIfShapeAContainsShapeB(cluster.Shape, GetMatchShape());
             }
     }
 }
