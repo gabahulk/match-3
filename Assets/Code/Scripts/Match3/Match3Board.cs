@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Code.Scripts.Configs;
 using Code.Scripts.Match3;
@@ -27,15 +28,17 @@ public class Match3Board : MonoBehaviour, IMatch3Board
     private Vector2 _initialPosition;
 
 
-    private void Start()
+    private async void Start()
     {
         _tileSize = tilePrefab.GetComponent<RectTransform>().rect.size;
         _tileSpacing = new Vector2(spacing, spacing);
         _totalSpacing = _tileSpacing * boardSize; 
         GetComponent<RectTransform>().sizeDelta = _tileSize * boardSize + new Vector2(margin, margin) + _totalSpacing;
         _initialPosition = _tileSize * new Vector2(-1, 1) * boardSize/2 + _tileSize/2 * new Vector2(1, -1) + (_tileSpacing * new Vector2(-1,1));
-
+        isBoardLocked.value = false;
         InitializeBoard();
+        var tileClusters = CheckMatches();
+        await HandlePopBehavior(tileClusters);
     }
 
     public void InitializeBoard()
@@ -158,7 +161,7 @@ public class Match3Board : MonoBehaviour, IMatch3Board
         }
     }
     
-    private async void RefillBoard()
+    private async Task RefillBoard()
     {
         var tasks = new List<Task>();
 
@@ -230,7 +233,7 @@ public class Match3Board : MonoBehaviour, IMatch3Board
             return connectedTiles;
         }
         excludedTiles.Add(tile, true);
-        connectedTiles.AddTile(tile.GetTilePositionInGrid(), tile);
+        connectedTiles.AddTile(position, tile);
         
         var directions = new []
         {
@@ -266,6 +269,11 @@ public class Match3Board : MonoBehaviour, IMatch3Board
         var currentTile = currentTileObject.value.GetComponent<Match3Tile>();
         var positionA = currentTile.GetTilePositionInGrid();
         var positionB = positionA + direction;
+        if (IsOutOfBounds(positionB))
+        {
+            isBoardLocked.value = false;
+            return;
+        }
         var auxTile = _tileGrid[positionB.x, positionB.y];
         _tileGrid[positionB.x, positionB.y] = currentTile;
         _tileGrid[positionA.x, positionA.y] = auxTile;
@@ -277,7 +285,6 @@ public class Match3Board : MonoBehaviour, IMatch3Board
         await Task.WhenAll(tasks.ToArray());
         tasks.Clear();
         var tileClusters = CheckMatches();
-        print("first clusters");
         if (tileClusters.Count <= 0)
         {
             _tileGrid[positionB.x, positionB.y] = auxTile;
@@ -288,28 +295,119 @@ public class Match3Board : MonoBehaviour, IMatch3Board
         }
         else
         {
-            while (tileClusters.Count > 0)
-            {
-                await PopTiles(tileClusters);
-                RefillBoard();
-                print("waiting refill");
-                await Task.Delay(1000);
-                print("rechecking clusters");
-                tileClusters = CheckMatches();
-                if (tileClusters.Count > 0)
-                {
-                    print("more clusters");
-                }
-            }
+            await HandlePopBehavior(tileClusters);
+        }
+
+        var suggestedMatch = CheckIfBoardHasPossibleMatches();
+        while (suggestedMatch == null)
+        {
+            await ShuffleBoard();
+            tileClusters = CheckMatches();
+            await HandlePopBehavior(tileClusters);
+            suggestedMatch = CheckIfBoardHasPossibleMatches();
         }
         isBoardLocked.value = false;
     }
-}
 
-public interface IMatch3Board
-{
-    void InitializeBoard();
-    List<TileCluster> CheckMatches();
+    private async Task HandlePopBehavior(List<TileCluster> tileClusters)
+    {
+        while (tileClusters.Count > 0)
+        {
+            await PopTiles(tileClusters);
+            await RefillBoard();
+            tileClusters = CheckMatches();
+        }
+    }
 
-    void MoveSelectedTile(Vector2Int direction);
+    public TileCluster CheckIfBoardHasPossibleMatches()
+    {
+        var directions = new []
+        {
+            Vector2Int.down, Vector2Int.up, Vector2Int.left, Vector2Int.right
+        };
+        
+        var auxPosition = new Vector2Int(-1, -1);
+        var donePositions = new HashSet<Vector2Int>();
+        for (var i = 0; i < _tileGrid.GetLength(0); i++)
+        {
+            for (var j = 0; j < _tileGrid.GetLength(1); j++)
+            {
+                foreach (var direction in directions)
+                {
+                    auxPosition.x = i + direction.x;
+                    auxPosition.y = j + direction.y;
+                    if (IsOutOfBounds(auxPosition) || donePositions.Contains(auxPosition))
+                    {
+                        continue;
+                    }
+
+                    (_tileGrid[auxPosition.x, auxPosition.y], _tileGrid[i, j]) = (_tileGrid[i, j], _tileGrid[auxPosition.x, auxPosition.y]);
+                    var matches = CheckMatches();
+                    (_tileGrid[auxPosition.x, auxPosition.y], _tileGrid[i, j]) = (_tileGrid[i, j], _tileGrid[auxPosition.x, auxPosition.y]);
+                    donePositions.Add(new Vector2Int(i, j));
+                    if (matches.Count > 0)
+                    {
+                        return matches[0];
+                    }
+                } 
+            }
+        }
+
+        return null;
+    }
+
+    private Task ShuffleBoard()
+    {
+        ShuffleMatrix();
+        List<Task> tasks = new List<Task>();
+        var rows = _tileGrid.GetLength(0);
+        var cols = _tileGrid.GetLength(1);
+        var pos = Vector2Int.zero;
+        for (var i = 0; i < rows; i++)
+        {
+            for (var j = 0; j < cols; j++)
+            {
+                pos.x = i;
+                pos.y = j;
+                tasks.Add(PositionTile(_tileGrid[i, j],pos));
+            }
+        }
+        return Task.WhenAll(tasks.ToArray());
+    }
+    
+    private void ShuffleMatrix()
+    {
+        var rows = _tileGrid.GetLength(0);
+        var cols = _tileGrid.GetLength(1);
+
+        // Flatten the matrix into a 1D array
+        var flatMatrix = new Match3Tile[rows * cols];
+        var index = 0;
+
+        for (var i = 0; i < rows; i++)
+        {
+            for (var j = 0; j < cols; j++)
+            {
+                flatMatrix[index++] = _tileGrid[i, j];
+            }
+        }
+
+        // Shuffle the 1D array using Fisher-Yates algorithm
+        for (int i = flatMatrix.Length - 1; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);  // Get a random index
+            // Swap elements at i and j
+            (flatMatrix[i], flatMatrix[j]) = (flatMatrix[j], flatMatrix[i]);
+        }
+
+        // Map the shuffled array back to the matrix
+        index = 0;
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                _tileGrid[i, j] = flatMatrix[index++];
+            }
+        }
+    }
 }
