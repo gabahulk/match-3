@@ -607,16 +607,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07b572c3f3326e9468e68fcfd3827232, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _tileTypes:
+  tileTypes:
   - {fileID: 11400000, guid: 068415af5d6f77e429bb3690c284e120, type: 2}
   - {fileID: 11400000, guid: de3fe00d01b0cf14a9f887d2870176b7, type: 2}
   - {fileID: 11400000, guid: 4867867770797c144b61aa9a957d59c3, type: 2}
   - {fileID: 11400000, guid: 4cba9ea6a083a9a45bc599ccd29777e5, type: 2}
   - {fileID: 11400000, guid: 5bd430b46e2068c46b5cb34f2b9ec534, type: 2}
+  matchTypes:
+  - {fileID: 11400000, guid: e51d5e02480787f469e5b8ff5a39fe9f, type: 2}
+  - {fileID: 11400000, guid: de767f0b73544154eae1e8f38e7f513e, type: 2}
+  - {fileID: 11400000, guid: 4c927f0b4b1fa0d49894833355f7dad0, type: 2}
+  - {fileID: 11400000, guid: 7f9ae6933f0cf55419be809ff8625cd5, type: 2}
   boardSize: 5
   margin: 20
   spacing: 40
   currentTileObject: {fileID: 11400000, guid: a58fdc09dbb8467409b679cdbe2ce25e, type: 2}
+  animationsConfig: {fileID: 11400000, guid: 166aba29ec2469e4594f03680407c1ee, type: 2}
   tilePrefab: {fileID: 31127991900984057, guid: 2a6dca639033b544184dca41f55dd843, type: 3}
 --- !u!1 &1329768475
 GameObject:
