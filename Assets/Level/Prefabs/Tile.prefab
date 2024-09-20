@@ -95,6 +95,7 @@ MonoBehaviour:
   moveCurrentTileDownEvent: {fileID: 11400000, guid: df43a4e376faa48469b428257de13418, type: 2}
   moveCurrentTileLeftEvent: {fileID: 11400000, guid: f228526d507cb2c42b64792f1d820d5e, type: 2}
   moveCurrentTileRightEvent: {fileID: 11400000, guid: 01647c622765b734c935d098b0262054, type: 2}
+  isBoardLocked: {fileID: 11400000, guid: f42f5cd83b36d984289e422ae027a874, type: 2}
 --- !u!1 &5075363918425616421
 GameObject:
   m_ObjectHideFlags: 0

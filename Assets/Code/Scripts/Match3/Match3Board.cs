@@ -262,6 +262,7 @@ public class Match3Board : MonoBehaviour, IMatch3Board
 
     public async void MoveSelectedTile(Vector2Int direction)
     {
+        isBoardLocked.value = true;
         var currentTile = currentTileObject.value.GetComponent<Match3Tile>();
         var positionA = currentTile.GetTilePositionInGrid();
         var positionB = positionA + direction;
@@ -301,7 +302,7 @@ public class Match3Board : MonoBehaviour, IMatch3Board
                 }
             }
         }
-        
+        isBoardLocked.value = false;
     }
 }
 
