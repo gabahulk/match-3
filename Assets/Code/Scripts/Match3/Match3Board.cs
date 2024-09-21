@@ -1,5 +1,5 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Code.Scripts.Configs;
 using Code.Scripts.Match3;
@@ -19,6 +19,7 @@ public class Match3Board : MonoBehaviour, IMatch3Board
     [SerializeField] private GameObjectVariable currentTileObject;
     [SerializeField] private Match3BoardAnimationsConfig animationsConfig;
     [SerializeField] private BoolVariable isBoardLocked;
+    [SerializeField] private RectTransform container;
 
     public Match3Tile tilePrefab;
     private Match3Tile[,] _tileGrid;
@@ -26,11 +27,14 @@ public class Match3Board : MonoBehaviour, IMatch3Board
     private Vector2 _tileSpacing;
     private Vector2 _totalSpacing; 
     private Vector2 _initialPosition;
-
+    private Vector2 _containerSize;
 
     private async void Start()
     {
-        _tileSize = tilePrefab.GetComponent<RectTransform>().rect.size;
+        _containerSize = new Vector2(container.rect.width, container.rect.height);
+        var tileSize = (Math.Min(_containerSize.x, _containerSize.y) - (margin * 4) - spacing*(boardSize-1)) / boardSize;
+        _tileSize = new Vector2(tileSize, tileSize);
+        tilePrefab.GetComponent<RectTransform>().sizeDelta  = _tileSize;
         _tileSpacing = new Vector2(spacing, spacing);
         _totalSpacing = _tileSpacing * boardSize; 
         GetComponent<RectTransform>().sizeDelta = _tileSize * boardSize + new Vector2(margin, margin) + _totalSpacing;

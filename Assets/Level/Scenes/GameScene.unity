@@ -554,8 +554,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 720, y: 720}
+  m_AnchoredPosition: {x: 0, y: -165}
+  m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &970725719
 MonoBehaviour:
@@ -620,10 +620,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7f9ae6933f0cf55419be809ff8625cd5, type: 2}
   boardSize: 5
   margin: 20
-  spacing: 40
+  spacing: 20
   currentTileObject: {fileID: 11400000, guid: a58fdc09dbb8467409b679cdbe2ce25e, type: 2}
   animationsConfig: {fileID: 11400000, guid: 166aba29ec2469e4594f03680407c1ee, type: 2}
   isBoardLocked: {fileID: 11400000, guid: f42f5cd83b36d984289e422ae027a874, type: 2}
+  container: {fileID: 970725717}
   tilePrefab: {fileID: 31127991900984057, guid: 2a6dca639033b544184dca41f55dd843, type: 3}
 --- !u!1 &1329768475
 GameObject:
