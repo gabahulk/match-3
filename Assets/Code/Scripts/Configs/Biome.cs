@@ -1,18 +1,13 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Biome : MonoBehaviour
+namespace Code.Scripts.Configs
 {
-    // Start is called before the first frame update
-    void Start()
+    [CreateAssetMenu(fileName = "new Biome", menuName = "GameConfigs/Biome")]
+    public class Biome : ScriptableObject
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        public Sprite[] backgroundSprites;
+        public List<Game.Enemy.Enemy> enemies;
+        public Vector2Int enemyQuantity;
     }
 }
