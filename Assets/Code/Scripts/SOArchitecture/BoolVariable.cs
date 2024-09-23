@@ -10,17 +10,21 @@ namespace Code.Scripts.SOArchitecture
             [Multiline]
             public string developerDescription = "";
 #endif
-            public bool value;
-
-            public void SetValue(bool newValue)
+            [SerializeField] private bool _value;
+            public bool Value
             {
-                value = newValue;
+                get => _value;
+                set => SetValue(value);
+            }
+            private void SetValue(bool newValue)
+            {
+                _value = newValue;
                 OnChanged();
             }
 
             public void SetValue(GameObjectVariable newValue)
             {
-                SetValue(newValue.value);
+                SetValue(newValue.Value);
             }
         }
 }

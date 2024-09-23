@@ -9,17 +9,23 @@ namespace Code.Scripts.SOArchitecture
         [Multiline]
         public string developerDescription = "";
 #endif
-        public int value;
+        [SerializeField] private int _value;
 
-        public void SetValue(int newValue)
+        public int Value
         {
-            value = newValue;
+            get => _value;
+            set => SetValue(value);
+        }
+
+        private void SetValue(int newValue)
+        {
+            _value = newValue;
             OnChanged();
         }
 
-        public void SetValue(IntVariable newValue)
+        private void SetValue(IntVariable newValue)
         {
-            SetValue(newValue.value);
+            SetValue(newValue.Value);
         }
     }
 }

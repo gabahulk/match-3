@@ -8,5 +8,6 @@ namespace Code.Scripts.Enemy
     {
         public List<TileTally> enemyRequirements = new();
         public int damage;
+        public float timeBetweenAttacks = 2.0f;
     }
 }

@@ -53,6 +53,8 @@ MonoBehaviour:
   playerTileInventory: {fileID: 11400000, guid: 8fdbf7fb1023a8c478a64107f1aeb16e, type: 2}
   requirementsUI: {fileID: 5928187812559357402}
   enemyRuntimeSet: {fileID: 11400000, guid: a9feb52c52e78b54fb1cfb93d26d2395, type: 2}
+  enemyIncomingDamageVariable: {fileID: 11400000, guid: 46692fe8fc94ed744922a2d44ea2bbb4, type: 2}
+  enemyAttackEvent: {fileID: 11400000, guid: b1326eceadb7f6a4b980b5196fb0a6d2, type: 2}
 --- !u!1 &7968407195121246151
 GameObject:
   m_ObjectHideFlags: 0

@@ -38,7 +38,7 @@ namespace Code.Scripts.Match3
             tilePrefab.GetComponent<RectTransform>().sizeDelta  = _tileSize;
             _tileSpacing = new Vector2(spacing, spacing);
             _initialPosition = _tileSize * new Vector2(-1, 1) * boardSize/2 + _tileSize/2 * new Vector2(1, -1) + (_tileSpacing * new Vector2(-1,1));
-            isBoardLocked.value = false;
+            isBoardLocked.Value = false;
             InitializeBoard();
             var tileClusters = CheckMatches();
             await HandlePopBehavior(tileClusters);
@@ -276,13 +276,13 @@ namespace Code.Scripts.Match3
 
         public async void MoveSelectedTile(Vector2Int direction)
         {
-            isBoardLocked.value = true;
-            var currentTile = currentTileObject.value.GetComponent<Match3Tile>();
+            isBoardLocked.Value = true;
+            var currentTile = currentTileObject.Value.GetComponent<Match3Tile>();
             var positionA = currentTile.GetTilePositionInGrid();
             var positionB = positionA + direction;
             if (IsOutOfBounds(positionB))
             {
-                isBoardLocked.value = false;
+                isBoardLocked.Value = false;
                 return;
             }
             var auxTile = _tileGrid[positionB.x, positionB.y];
@@ -317,7 +317,7 @@ namespace Code.Scripts.Match3
                 await HandlePopBehavior(tileClusters);
                 suggestedMatch = CheckIfBoardHasPossibleMatches();
             }
-            isBoardLocked.value = false;
+            isBoardLocked.Value = false;
         }
 
         private async Task HandlePopBehavior(List<TileCluster> tileClusters)

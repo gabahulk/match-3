@@ -11,17 +11,23 @@ namespace Code.Scripts.SOArchitecture
             [Multiline]
             public string developerDescription = "";
 #endif
-            public GameObject value;
+            [SerializeField] private GameObject _value;
+
+            public GameObject Value
+            {
+                get => _value;
+                set => SetValue(value);
+            }
 
             public void SetValue(GameObject newValue)
             {
-                value = newValue;
+                _value = newValue;
                 OnChanged();
             }
 
             public void SetValue(GameObjectVariable newValue)
             {
-                SetValue(newValue.value);
+                SetValue(newValue._value);
             }
     }
 }

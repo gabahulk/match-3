@@ -2,6 +2,7 @@
 using System.Linq;
 using Code.Scripts.Enemy;
 using Code.Scripts.Game.Player;
+using Code.Scripts.SOArchitecture;
 using UnityEngine;
 
 namespace Code.Scripts.Game.Enemy
@@ -12,10 +13,11 @@ namespace Code.Scripts.Game.Enemy
         [SerializeField] private PlayerTileInventory playerTileInventory;
         [SerializeField] private RequirementsUI requirementsUI;
         [SerializeField] private EnemyRuntimeSet enemyRuntimeSet;
+        [SerializeField] private IntVariable enemyIncomingDamageVariable;
+        [SerializeField] private GameEvent enemyAttackEvent;
 
 
         private readonly Dictionary<TileType, int> enemyRequirements = new();
-        
         void Start()
         {
             foreach (var tally in data.enemyRequirements)
@@ -26,6 +28,14 @@ namespace Code.Scripts.Game.Enemy
             requirementsUI.Setup(enemyRequirements);
             playerTileInventory.Changed += UpdateTally;
             UpdateTally();
+            InvokeRepeating(nameof(Attack), data.timeBetweenAttacks, data.timeBetweenAttacks);
+        }
+
+
+        private void Attack()
+        {
+            enemyIncomingDamageVariable.Value = data.damage;
+            enemyAttackEvent.Raise();
         }
 
         public void OnDestroy()

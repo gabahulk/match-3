@@ -42,7 +42,7 @@ public class Match3Tile : MonoBehaviour, IDragHandler
    public void OnDrag(PointerEventData eventData)
    {
       var direction = (eventData.position - new Vector2(transform.position.x, transform.position.y));
-      if (direction.magnitude < 25f || isBoardLocked.value)
+      if (direction.magnitude < 25f || isBoardLocked.Value)
          return;
       HandleSwipe(direction.normalized);
    }

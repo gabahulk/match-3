@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Code.Scripts.Game.Enemy;
+using Code.Scripts.SOArchitecture;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 namespace Code.Scripts.Game.Biome
@@ -10,6 +12,7 @@ namespace Code.Scripts.Game.Biome
         public List<Configs.Biome> biomes;
         public Transform enemyContainer;
         public EnemyRuntimeSet enemyRuntimeSet;
+        public Image biomeImage;
     
         private Configs.Biome currentBiome;
         private int numberOfEnemies;
@@ -24,6 +27,7 @@ namespace Code.Scripts.Game.Biome
         {
             enemyRuntimeSet.items.Clear();
             currentBiome = biomes[Random.Range(0, biomes.Count)];
+            biomeImage.sprite = currentBiome.backgroundSprites[Random.Range(0, currentBiome.backgroundSprites.Length)];
             numberOfEnemies = Random.Range(currentBiome.enemyQuantity.x, currentBiome.enemyQuantity.y);
             SpawnEnemy();
         }
