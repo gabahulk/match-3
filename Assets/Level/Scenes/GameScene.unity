@@ -678,6 +678,7 @@ GameObject:
   - component: {fileID: 257089825}
   - component: {fileID: 257089824}
   - component: {fileID: 257089826}
+  - component: {fileID: 257089827}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -736,6 +737,34 @@ MonoBehaviour:
       - m_Target: {fileID: 257089824}
         m_TargetAssemblyTypeName: Code.Scripts.Game.GameController, Match3
         m_MethodName: OnEnemyAttackEvent
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &257089827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 257089823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438e3da08fbb47adb822305dac629100, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  event: {fileID: 11400000, guid: 5e14ae060900ec34397207c8ab757765, type: 2}
+  response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 257089824}
+        m_TargetAssemblyTypeName: Code.Scripts.Game.GameController, Match3
+        m_MethodName: OnEnemyRequirementsMet
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1455,9 +1484,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   biomes:
   - {fileID: 11400000, guid: 51fdb6406a89c4340ba62d35d74f2a38, type: 2}
+  - {fileID: 11400000, guid: 87dc5394b65ef0c489e1f824173030c3, type: 2}
   enemyContainer: {fileID: 1427695613}
   enemyRuntimeSet: {fileID: 11400000, guid: a9feb52c52e78b54fb1cfb93d26d2395, type: 2}
   biomeImage: {fileID: 165563618}
+  isBoardLockedVariable: {fileID: 11400000, guid: f42f5cd83b36d984289e422ae027a874, type: 2}
 --- !u!1 &799073501
 GameObject:
   m_ObjectHideFlags: 0
@@ -1851,6 +1882,10 @@ GameObject:
   - component: {fileID: 978291857}
   - component: {fileID: 978291856}
   - component: {fileID: 978291858}
+  - component: {fileID: 978291861}
+  - component: {fileID: 978291862}
+  - component: {fileID: 978291860}
+  - component: {fileID: 978291859}
   m_Layer: 5
   m_Name: Player
   m_TagString: Untagged
@@ -1875,7 +1910,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -204, y: -76.4}
-  m_SizeDelta: {x: 86, y: 128}
+  m_SizeDelta: {x: 43, y: 64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &978291856
 MonoBehaviour:
@@ -1936,6 +1971,105 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &978291859
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 978291854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438e3da08fbb47adb822305dac629100, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  event: {fileID: 11400000, guid: b1326eceadb7f6a4b980b5196fb0a6d2, type: 2}
+  response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 978291861}
+        m_TargetAssemblyTypeName: PlayerController, Match3
+        m_MethodName: OnEnemyAttackEvent
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &978291860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 978291854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 438e3da08fbb47adb822305dac629100, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  event: {fileID: 11400000, guid: 5e14ae060900ec34397207c8ab757765, type: 2}
+  response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 978291862}
+        m_TargetAssemblyTypeName: Code.Scripts.Game.Player.HealthTileEffect, Match3
+        m_MethodName: ApplyTileEffect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 978291861}
+        m_TargetAssemblyTypeName: PlayerController, Match3
+        m_MethodName: OnEnemyRequirementsMet
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &978291861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 978291854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31a27b88ec3bda04a93f392ee920e209, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerTileInventory: {fileID: 11400000, guid: 8fdbf7fb1023a8c478a64107f1aeb16e, type: 2}
+  playerHealth: {fileID: 11400000, guid: 76ea3fd1f3dd8c4479a2705a6253e79a, type: 2}
+  enemyIncomingDamage: {fileID: 11400000, guid: 46692fe8fc94ed744922a2d44ea2bbb4, type: 2}
+  animator: {fileID: 978291858}
+--- !u!114 &978291862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 978291854}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e624265a8fa2f34e8fa807f560c1673, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerTileInventory: {fileID: 11400000, guid: 8fdbf7fb1023a8c478a64107f1aeb16e, type: 2}
+  heartTileType: {fileID: 11400000, guid: 4cba9ea6a083a9a45bc599ccd29777e5, type: 2}
+  health: {fileID: 11400000, guid: 76ea3fd1f3dd8c4479a2705a6253e79a, type: 2}
 --- !u!1 &1142301953
 GameObject:
   m_ObjectHideFlags: 0
@@ -2350,7 +2484,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 165, y: -95.8}
+  m_AnchoredPosition: {x: 165, y: -80}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1864353826

@@ -23,4 +23,9 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 9bfb8e4622b027340a2aaaf4b3bcc9e8, type: 3}
   enemies:
   - {fileID: 7161254953103853106, guid: f3b2d39fa6ff68749a0cc2c4b0b72ec2, type: 3}
+  - {fileID: 6910988440001223696, guid: eb984786a5495f943a34c9f1178b1573, type: 3}
+  - {fileID: 4752357732929376098, guid: 29208c0608f54bf429e1ddfbabce96f6, type: 3}
+  - {fileID: 8978351065953758619, guid: af2f93b62b8972f4b8d2b5b65cb84830, type: 3}
+  - {fileID: 899172825198963391, guid: 74a0773b3a6d9214b85a786b9134a7b0, type: 3}
+  - {fileID: 966560170670543852, guid: 138fff2e48d77a04cab049ebf5076777, type: 3}
   enemyQuantity: {x: 2, y: 4}

@@ -4,17 +4,22 @@ using Code.Scripts.Enemy;
 using Code.Scripts.Game.Player;
 using Code.Scripts.SOArchitecture;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Code.Scripts.Game.Enemy
 {
     public class Enemy : MonoBehaviour
     {
+        private static readonly int Damage = Animator.StringToHash("Damage");
+        private static readonly int AttackAnimation = Animator.StringToHash("Attack");
         [SerializeField] private EnemyData data;
         [SerializeField] private PlayerTileInventory playerTileInventory;
         [SerializeField] private RequirementsUI requirementsUI;
         [SerializeField] private EnemyRuntimeSet enemyRuntimeSet;
         [SerializeField] private IntVariable enemyIncomingDamageVariable;
         [SerializeField] private GameEvent enemyAttackEvent;
+        [SerializeField] private GameEvent enemyRequirementMet;
+        [SerializeField] private Animator animator;
 
 
         private readonly Dictionary<TileType, int> enemyRequirements = new();
@@ -34,6 +39,7 @@ namespace Code.Scripts.Game.Enemy
 
         private void Attack()
         {
+            animator.SetTrigger(AttackAnimation);
             enemyIncomingDamageVariable.Value = data.damage;
             enemyAttackEvent.Raise();
         }
@@ -56,23 +62,34 @@ namespace Code.Scripts.Game.Enemy
                 }
                 else if(playerTileInventory.Inventory[tileType] > 0)
                 {
-                    var aux = enemyRequirements[tileType];
                     enemyRequirements[tileType] -= playerTileInventory.Inventory[tileType];
-                    playerTileInventory.UpdateTiles(tileType, -aux, false);
+                    playerTileInventory.SetTiles(tileType, 0, false);
                 }
 
                 isRequirementCompleted &= enemyRequirements[tileType] == 0;
             }
+            print("----------Enemy Requirements----------");
+            foreach (var requirement in enemyRequirements)
+            {
+                print($"{requirement.Key}: {requirement.Value}");
+            }
+            print("------------------------------");
+
             
             requirementsUI.UpdateRequirements();
 
             if (isRequirementCompleted)
             {
-                Die();
+                enemyRequirementMet.Raise();
             }
         }
 
-        private void Die()
+        public void Die()
+        {
+            animator.SetTrigger(Damage);
+        }
+
+        public void OnDamageAnimationEnded()
         {
             enemyRuntimeSet.Remove(this);
             Destroy(gameObject);

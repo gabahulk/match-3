@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Code.Scripts.Game.Enemy;
 using Code.Scripts.SOArchitecture;
 using UnityEngine;
@@ -13,6 +14,7 @@ namespace Code.Scripts.Game.Biome
         public Transform enemyContainer;
         public EnemyRuntimeSet enemyRuntimeSet;
         public Image biomeImage;
+        public BoolVariable isBoardLockedVariable;
     
         private Configs.Biome currentBiome;
         private int numberOfEnemies;
@@ -29,11 +31,14 @@ namespace Code.Scripts.Game.Biome
             currentBiome = biomes[Random.Range(0, biomes.Count)];
             biomeImage.sprite = currentBiome.backgroundSprites[Random.Range(0, currentBiome.backgroundSprites.Length)];
             numberOfEnemies = Random.Range(currentBiome.enemyQuantity.x, currentBiome.enemyQuantity.y);
+            isBoardLockedVariable.Value = true;
             SpawnEnemy();
+            isBoardLockedVariable.Value = false;
         }
 
-        private void SpawnEnemy()
+        private async void SpawnEnemy()
         {
+            await Task.Delay(1000);
             var currentEnemy = Instantiate(currentBiome.enemies[Random.Range(0, currentBiome.enemies.Count)], enemyContainer);
             enemyRuntimeSet.Add(currentEnemy);
         }

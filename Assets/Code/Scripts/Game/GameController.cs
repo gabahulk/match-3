@@ -45,10 +45,5 @@ namespace Code.Scripts.Game
         {
             Application.Quit();
         }
-
-        public void OnEnemyAttackEvent()
-        {
-            playerHealth.Value -= enemyIncomingDamage.Value;
-        }
     }
 }

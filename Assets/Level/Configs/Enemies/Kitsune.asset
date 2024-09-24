@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7864c46b63345948f0a809d0dbd1842, type: 3}
+  m_Name: Kitsune
+  m_EditorClassIdentifier: 
+  enemyRequirements:
+  - tileType: {fileID: 11400000, guid: de3fe00d01b0cf14a9f887d2870176b7, type: 2}
+    quantity: 6
+  - tileType: {fileID: 11400000, guid: 4867867770797c144b61aa9a957d59c3, type: 2}
+    quantity: 6
+  - tileType: {fileID: 11400000, guid: 4cba9ea6a083a9a45bc599ccd29777e5, type: 2}
+    quantity: 3
+  - tileType: {fileID: 11400000, guid: 5bd430b46e2068c46b5cb34f2b9ec534, type: 2}
+    quantity: 3
+  damage: 35
+  timeBetweenAttacks: 12

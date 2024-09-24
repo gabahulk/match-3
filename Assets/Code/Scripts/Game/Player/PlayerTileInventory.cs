@@ -32,6 +32,22 @@ namespace Code.Scripts.Game.Player
             if (shouldCallEvent)
                 OnChanged();
         }
+        
+        public void SetTiles(TileType tileType, int amount, bool shouldCallEvent = true)
+        {
+            Inventory[tileType] = amount;
+            _tileTallies.Find(x => x.tileType == tileType).quantity = amount;
+            if (shouldCallEvent)
+                OnChanged();
+        }
+
+        public void ClearInventory()
+        {
+            foreach (var tileType in config.TileTypes)
+            {
+                SetTiles(tileType, 0, false);
+            }
+        }
 
         public int this[TileType tileType]
         {
