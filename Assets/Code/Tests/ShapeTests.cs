@@ -1,7 +1,7 @@
-using Code.Scripts.Match3;
 using NUnit.Framework;
+using Code.Scripts.Match3;
 
-namespace Code.Scripts.Tests
+namespace Code.Tests
 {
     public class ShapeTests
     {
