@@ -1,3 +1,4 @@
+using Code.Scripts.Game.Enemy;
 using Code.Scripts.Game.Player;
 using Code.Scripts.SOArchitecture;
 using UnityEngine;
@@ -8,6 +9,7 @@ namespace Code.Scripts.Game
     public class GameController : MonoBehaviour
     {
         [SerializeField] private PlayerTileInventory playerTileInventory;
+        [SerializeField] private EnemyRuntimeSet enemyRuntimeSet;
         [SerializeField] private PlayerData playerData;
         [SerializeField] private IntVariable playerHealth;
         [SerializeField] private IntVariable enemyIncomingDamage;
@@ -16,6 +18,7 @@ namespace Code.Scripts.Game
 
         private void Start()
         {
+            enemyRuntimeSet.items.Clear();
             gameOverScreen.SetActive(false);
             playerTileInventory.Init();
             playerHealth.Value = playerData.startingHealth;

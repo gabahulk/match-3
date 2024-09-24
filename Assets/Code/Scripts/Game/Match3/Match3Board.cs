@@ -22,6 +22,7 @@ namespace Code.Scripts.Match3
         [SerializeField] private Match3BoardAnimationsConfig animationsConfig;
         [SerializeField] private BoolVariable isBoardLocked;
         [SerializeField] private RectTransform container;
+        [SerializeField] private GameEvent tilePopEvent;
 
         public Match3Tile tilePrefab;
         private Match3Tile[,] _tileGrid;
@@ -162,6 +163,7 @@ namespace Code.Scripts.Match3
             sequence.Append(tile.transform.DOScale(animationsConfig.ScaleTargetValue, animationsConfig.ScaleDuration));
             sequence.Join(tile.GetComponent<Image>().DOColor(animationsConfig.FadeColor,animationsConfig.FadeDuration));
             sequence.AppendCallback(Callback);
+            tilePopEvent.Raise();
 
             return sequence.AsyncWaitForCompletion();
 

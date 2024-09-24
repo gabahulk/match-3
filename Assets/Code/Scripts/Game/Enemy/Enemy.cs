@@ -68,14 +68,6 @@ namespace Code.Scripts.Game.Enemy
 
                 isRequirementCompleted &= enemyRequirements[tileType] == 0;
             }
-            print("----------Enemy Requirements----------");
-            foreach (var requirement in enemyRequirements)
-            {
-                print($"{requirement.Key}: {requirement.Value}");
-            }
-            print("------------------------------");
-
-            
             requirementsUI.UpdateRequirements();
 
             if (isRequirementCompleted)

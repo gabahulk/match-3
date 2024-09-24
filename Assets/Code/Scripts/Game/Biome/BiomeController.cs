@@ -25,6 +25,11 @@ namespace Code.Scripts.Game.Biome
             enemyRuntimeSet.Changed += OnEnemiesChanged;
         }
 
+        private void OnDestroy()
+        {
+            enemyRuntimeSet.Changed -= OnEnemiesChanged;
+        }
+        
         private void CreateBiome()
         {
             enemyRuntimeSet.items.Clear();

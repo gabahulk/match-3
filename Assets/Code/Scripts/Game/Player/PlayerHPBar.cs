@@ -15,6 +15,11 @@ namespace Code.Scripts.Game.Player
             OnPlayerHPChanged();
         }
 
+        void OnDestroy()
+        {
+            playerHP.Changed -= OnPlayerHPChanged;
+        }
+
         private void OnPlayerHPChanged()
         {
             healthSlider.value = playerHP.Value;
