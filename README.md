@@ -23,7 +23,7 @@ As the game interactions are done through Game Events (Scriptable Objects that a
 One part of the game I thought was error prone and would be hard to debug was recognizing which tile pattern was formed after a move, so I created unit tests and used test driven development to code this feature. The tests helped immensely both while developing the feature and in the future changes, and I think it was a highlight of this challenge.
 
 ## The Game
-The objective of the game is to match the tiles that are above the enemy head. When you achieve the quantity they're asking, they are vanquished and a new monster appears.![[readme_image_01.png]]
+The objective of the game is to match the tiles that are above the enemy head. When you achieve the quantity they're asking, they are vanquished and a new monster appears. [Image](readme_image_01.png)
 
 There are 15 enemies across 2 biomes, all can be configured through SOs.
 
