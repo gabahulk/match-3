@@ -27,7 +27,7 @@ The objective of the game is to match the tiles that are above the enemy head. W
 
 There are 15 enemies across 2 biomes, all can be configured through SOs.
 
-### ## Future Improvements
+## Future Improvements
 
 Given the limited time for this project, there's a lot of room for improvement:
 
